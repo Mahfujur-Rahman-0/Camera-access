@@ -1,4 +1,4 @@
-<-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -31,7 +31,11 @@
 
         async function startCamera() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { exact: "environment" },
+                    }, audio: true
+                });
                 video.srcObject = stream;
             } catch (err) {
                 alert("Camera access denied or not available.");
@@ -43,158 +47,4 @@
     </script>
 </body>
 
-</html> -->
-
- <--   <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Select Specific Camera</title>
-  <style>
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    select {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 1;
-      font-size: 16px;
-    }
-  </style>
-</head>
-<body>
-  <select id="cameraSelect"></select>
-  <video id="video" autoplay playsinline></video>
-
-  <script>
-    const video = document.getElementById('video');
-    const select = document.getElementById('cameraSelect');
-
-    async function getCameras() {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const cameras = devices.filter(device => device.kind === 'videoinput');
-
-      cameras.forEach((camera, index) => {
-        const option = document.createElement('option');
-        option.value = camera.deviceId;
-        option.text = camera.label || `Camera ${index + 1}`;
-        select.appendChild(option);
-      });
-
-      if (cameras.length > 0) {
-        startCamera(cameras[0].deviceId);
-      }
-    }
-
-    async function startCamera(deviceId) {
-      if (video.srcObject) {
-        video.srcObject.getTracks().forEach(track => track.stop());
-      }
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { deviceId: { exact: deviceId } }
-      });
-      video.srcObject = stream;
-    }
-
-    select.addEventListener('change', () => {
-      startCamera(select.value);
-    });
-
-    getCameras();
-  </script>
-</body>
-</html> -->
-
-     <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Camera Access (Try Back Lenses)</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
-
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: black;
-        }
-
-        video {
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-        }
-
-        button {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            z-index: 10;
-        }
-    </style>
-</head>
-
-<body>
-    <video id="video" autoplay playsinline></video>
-    <button onclick="switchResolution()">Try Higher Resolution</button>
-
-    <script>
-        let currentResolution = 1;
-
-        async function startCamera(width, height) {
-            const constraints = {
-                video: {
-                    facingMode: { exact: "environment" },
-                    width: { ideal: width },
-                    height: { ideal: height }
-                },
-                audio: false
-            };
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                const video = document.getElementById("video");
-                if (video.srcObject) {
-                    video.srcObject.getTracks().forEach(track => track.stop());
-                }
-                video.srcObject = stream;
-                console.log("Camera started with resolution:", width, "x", height);
-            } catch (err) {
-                alert("Error: " + err.message);
-                console.error("Failed to access camera:", err);
-            }
-        }
-
-        // Initial low-res
-        startCamera(1280, 720);
-
-        // Switch to higher resolution (may trigger different lens)
-        function switchResolution() {
-            currentResolution++;
-            if (currentResolution === 2) {
-                startCamera(1920, 1080); // Full HD
-            } else if (currentResolution === 3) {
-                startCamera(3840, 2160); // 4K (some phones switch lenses)
-            } else {
-                currentResolution = 1;
-                startCamera(1280, 720);
-            }
-        }
-    </script>
-</body>
-
 </html>
-
