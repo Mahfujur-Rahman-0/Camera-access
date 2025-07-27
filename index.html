@@ -20,30 +20,45 @@
             height: 100%;
             object-fit: cover;
         }
+
+        .fa-camera-rotate {
+            position: absolute;
+            top: 50%;
+            right: 5%;
+            color: #fff;
+        }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
 </head>
 
 <body>
     <video id="video" autoplay playsinline></video>
 
+    <i id="RotateCamera" class="fa-solid fa-camera-rotate"></i>
+
     <script>
         const video = document.getElementById('video');
+        const RotateCamera = document.getElementById("RotateCamera");
+        let checker = true;
 
         async function startCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: {
-                        facingMode: { exact: "environment" },
+                        facingMode: { exact: checker ? "environment" : "user" },
                     }, audio: true
                 });
                 video.srcObject = stream;
             } catch (err) {
-                alert("Camera access denied or not available.");
+                console.log("Camera access denied or not available.");
                 console.error("Error accessing camera:", err);
             }
         }
 
         startCamera();
+        RotateCamera.addEventListener("click", () => {
+            checker = checker ? false : true;
+        })
     </script>
 </body>
 
